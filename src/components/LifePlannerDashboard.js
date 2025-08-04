@@ -1,80 +1,93 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// Your Lambda Function URL (already includes /items endpoint for all CRUD ops)
-const LAMBDA_URL = 'https://je3r7euop3gwsiq62fe7ng3nfu0tuhtq.lambda-url.us-west-2.on.aws/items';
+// Paste your Lambda Function URL here (NO /items at end)
+const FUNCTION_URL = 'https://je3r7euop3gwsiq62fe7ng3nfu0tuhtq.lambda-url.us-west-2.on.aws/';
 
-export default function LifePlannerDashboard() {
+function LifePlannerDashboard() {
   const [items, setItems] = useState([]);
-  const [form, setForm] = useState({ title: '', description: '' });
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Fetch all items on load
+  // Fetch items on load
   useEffect(() => {
-    fetch(LAMBDA_URL)
+    setLoading(true);
+    fetch(FUNCTION_URL)
       .then(res => res.json())
-      .then(setItems)
-      .catch(() => setError('Failed to load items.'))
-      .finally(() => setLoading(false));
+      .then(data => {
+        if (Array.isArray(data)) {
+          setItems(data);
+          setError('');
+        } else {
+          setItems([]);
+          setError(data?.error || 'Unknown error');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('Failed to load: ' + err.message);
+        setLoading(false);
+      });
   }, []);
 
-  // Handle form input change
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-
   // Add new item
-  const handleAdd = async e => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     setError('');
-    try {
-      const res = await fetch(LAMBDA_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) throw new Error('Failed to add item.');
-      const newItem = await res.json();
-      setItems(items => [...items, newItem]);
-      setForm({ title: '', description: '' });
-    } catch (err) {
-      setError(err.message);
+    const payload = { title, description, completed: false };
+    const res = await fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.id) {
+      setItems(items.concat(data));
+      setTitle('');
+      setDescription('');
+    } else {
+      setError(data.error || 'Failed to add item');
     }
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: 'auto', padding: 16, background: '#f7fafc', borderRadius: 8 }}>
-      <h2>Life Planner</h2>
-      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-      <form onSubmit={handleAdd} style={{ marginBottom: 20, display: 'flex', gap: 8 }}>
+    <div style={{ maxWidth: 500, margin: '2rem auto', background: '#fff', borderRadius: 8, boxShadow: '0 2px 16px #0002', padding: 24 }}>
+      <h2>Dashboard Life Planner</h2>
+      {loading ? <p>Loading...</p> : null}
+      {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+
+      {/* List items */}
+      <ul>
+        {Array.isArray(items) && items.map(item => (
+          <li key={item.id}>
+            <strong>{item.title}</strong>
+            <div>{item.description}</div>
+            <div>Status: {item.completed ? 'Done' : 'Pending'}</div>
+          </li>
+        ))}
+      </ul>
+
+      {/* Add new item */}
+      <form onSubmit={handleAdd} style={{ marginTop: 24 }}>
         <input
-          name="title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
           placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
           required
-          style={{ flex: 1, padding: 6 }}
+          style={{ marginRight: 8 }}
         />
         <input
-          name="description"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
           placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          style={{ flex: 2, padding: 6 }}
+          required
+          style={{ marginRight: 8 }}
         />
-        <button type="submit" style={{ padding: '6px 16px' }}>Add</button>
+        <button type="submit">Add</button>
       </form>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {items.length === 0 && <li>No items yet.</li>}
-          {items.map(item => (
-            <li key={item.id} style={{ padding: 8, background: '#fff', marginBottom: 6, borderRadius: 4 }}>
-              <strong>{item.title}</strong>
-              <span style={{ marginLeft: 8 }}>{item.description}</span>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
+
+export default LifePlannerDashboard;
