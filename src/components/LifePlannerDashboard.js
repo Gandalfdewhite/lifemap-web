@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 // Paste your Lambda Function URL here (NO /items at end)
-const FUNCTION_URL = 'https://je3r7euop3gwsiq62fe7ng3nfu0tuhtq.lambda-url.us-west-2.on.aws/';
+const FUNCTION_URL = 'https://je3r7euop3gwsiq62fe7ng3nfu0tuhtq.lambda-url.us-west-2.on.aws';
 
 function LifePlannerDashboard() {
   const [items, setItems] = useState([]);
