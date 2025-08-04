@@ -5,7 +5,7 @@ function App() {
   return (
     <div>
       <h1>Welcome to Lifemap</h1>
-      <p>This is your starter React app hosted on AWS Amplify.</p>
+      <p>This is your React app deployed on AWS Amplify.</p>
     </div>
   );
 }
