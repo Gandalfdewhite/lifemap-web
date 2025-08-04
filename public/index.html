@@ -1,13 +1,6 @@
-// src/App.js
+// src/index.js
 import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-function App() {
-  return (
-    <div>
-      <h1>Welcome to Lifemap</h1>
-      <p>This is your starter React app hosted on AWS Amplify.</p>
-    </div>
-  );
-}
-
-export default App;
+ReactDOM.render(<App />, document.getElementById('root'));
