@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="app-container">
       <h1>Welcome to Lifemap fellow Farmers</h1>
-      <LifePlannerDashboard /> {/* ← Add the dashboard component here */}
+      <LifePlannerDashboard /> {/https://je3r7euop3gwsiq62fe7ng3nfu0tuhtq.lambda-url.us-west-2.on.aws//}
     </div>
   );
 }
