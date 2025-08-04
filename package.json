@@ -1,21 +1,6 @@
 {
   "name": "lifemap-web",
   "version": "1.0.0",
-<<<<<<< HEAD
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
-  }
-}
-=======
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -41,4 +26,3 @@
     ]
   }
 }
->>>>>>> f444de790832eaeb52459c626ff5fade9f228a65
