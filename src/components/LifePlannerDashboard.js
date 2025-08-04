@@ -12,44 +12,44 @@ function LifePlannerDashboard() {
 
   // Fetch items on load
   useEffect(() => {
-    setLoading(true);
-    fetch(FUNCTION_URL)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setItems(data);
-          setError('');
-        } else {
-          setItems([]);
-          setError(data?.error || 'Unknown error');
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        setError('Failed to load: ' + err.message);
-        setLoading(false);
-      });
-  }, []);
+  setLoading(true);
+  fetch(FUNCTION_URL + '/items')
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        setItems(data);
+        setError('');
+      } else {
+        setItems([]);
+        setError(data?.error || 'Unknown error');
+      }
+      setLoading(false);
+    })
+    .catch(err => {
+      setError('Failed to load: ' + err.message);
+      setLoading(false);
+    });
+}, []);
 
   // Add new item
   const handleAdd = async (e) => {
-    e.preventDefault();
-    setError('');
-    const payload = { title, description, completed: false };
-    const res = await fetch(FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.id) {
-      setItems(items.concat(data));
-      setTitle('');
-      setDescription('');
-    } else {
-      setError(data.error || 'Failed to add item');
-    }
-  };
+  e.preventDefault();
+  setError('');
+  const payload = { title, description, completed: false };
+  const res = await fetch(FUNCTION_URL + '/items', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (data.id) {
+    setItems(items.concat(data));
+    setTitle('');
+    setDescription('');
+  } else {
+    setError(data.error || 'Failed to add item');
+  }
+};
 
   return (
     <div style={{ maxWidth: 500, margin: '2rem auto', background: '#fff', borderRadius: 8, boxShadow: '0 2px 16px #0002', padding: 24 }}>
